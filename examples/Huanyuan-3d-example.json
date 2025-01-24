@@ -1,0 +1,168 @@
+{
+  "last_node_id": 11,
+  "last_link_id": 8,
+  "nodes": [
+    {
+      "id": 6,
+      "type": "Hunyuan3DDiT",
+      "pos": [
+        -390.7923889160156,
+        653.1351928710938
+      ],
+      "size": [
+        311.02288818359375,
+        210.78460693359375
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filename",
+          "type": "STRING",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Hunyuan3DDiT"
+      },
+      "widgets_values": [
+        30,
+        true,
+        true,
+        true,
+        false,
+        1334,
+        "randomize"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "LoadImage",
+      "pos": [
+        -796.2027587890625,
+        799.7608032226562
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "hunyuan-3d-demo.png",
+        "image"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "Preview3D",
+      "pos": [
+        88.74754333496094,
+        632.284423828125
+      ],
+      "size": [
+        515.9091186523438,
+        660
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model_file",
+          "type": "STRING",
+          "link": 8,
+          "widget": {
+            "name": "model_file"
+          }
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Preview3D"
+      },
+      "widgets_values": [
+        "hunyuan3d_2E54C.glb",
+        true,
+        "perspective",
+        "front",
+        "original",
+        "#000000",
+        10,
+        "original",
+        75,
+        null
+      ]
+    }
+  ],
+  "links": [
+    [
+      3,
+      7,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      8,
+      6,
+      0,
+      1,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6209213230591556,
+      "offset": [
+        1146.1771131048724,
+        -382.6375705508538
+      ]
+    },
+    "0246.VERSION": [
+      0,
+      0,
+      4
+    ],
+    "node_versions": {
+      "comfy-core": "0.3.12"
+    },
+    "ue_links": []
+  },
+  "version": 0.4
+}
