@@ -1,5 +1,5 @@
 
-This is a custom\_node for [https://github.com/comfyanonymous/ComfyUI](ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [https://github.com/Tencent/Hunyuan3D-2](Hunyuan-3D-2) from Tencent.
+This is a custom\_node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [Hunyuan-3D-2](https://github.com/Tencent/Hunyuan3D-2) from Tencent.
 
 Make sure you use an image with a transparent background.
 
@@ -20,7 +20,7 @@ Hunyuan-3D needs g++ 13, Suse has g++ 14+ by default
 
 ## Usage...
 
-* [examples/](Example workflow)
+* [Example workflow](examples/)
 * When you run it for the first time it will download the models which will take a long time.  Press the panel button on the top right ~~☐~~ to see the progress.
 * Put the input image into the "input" folder.  It must have a transparent background.
 * The 3D .glb file is saved in "output" after you run it.
