@@ -1,4 +1,5 @@
 
+
 This custom node might fail after the first restart.  Restart ComfyUI again.  Click on the panel ~~☐~~ to look for errors.
 
 
@@ -38,3 +39,6 @@ pip install -r requirements.txt
 cd ComfyUI-Hunyuan-3D-2
 git submodule update --init   # You need to get the submodules if you install from git
 ```
+
+
+![Screenshot, workflow is in the examples/ folder](assets/workflow_screenshot.png)
