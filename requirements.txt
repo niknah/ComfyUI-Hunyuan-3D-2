@@ -13,3 +13,5 @@ trimesh
 pymeshlab
 pygltflib
 xatlas
+scikit-image
+accelerate
