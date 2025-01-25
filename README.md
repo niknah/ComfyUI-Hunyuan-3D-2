@@ -1,4 +1,7 @@
 
+This is a custom\_node for [https://github.com/comfyanonymous/ComfyUI](ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [https://github.com/Tencent/Hunyuan3D-2](Hunyuan-3D-2) from Tencent.
+
+Make sure you use an image with a transparent background.
 
 This custom node might fail after the first restart.  Restart ComfyUI again.  Click on the panel ~~☐~~ to look for errors.
 
