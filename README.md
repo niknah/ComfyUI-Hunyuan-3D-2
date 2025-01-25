@@ -16,7 +16,7 @@ Hunyuan-3D needs g++ 13, Suse has g++ 14+ by default
 
 ## Usage...
 
-* (Example workflow)[examples/]
+* [examples/](Example workflow)
 * When you run it for the first time it will download the models which will take a long time.  Press the panel button on the top right ~~☐~~ to see the progress.
 * Put the input image into the "input" folder.  It must have a transparent background.
 * The 3D .glb file is saved in "output" after you run it.
@@ -27,8 +27,9 @@ Hunyuan-3D needs g++ 13, Suse has g++ 14+ by default
 * Hunyuan-3D-2 uses more main memory than GPU memory.  On a 16gb RAM main memory computer, you'll have to quit everything else other than ComfyUI, have only a few custom\_nodes installed.  Or use the command line version.  I have ran it on 16gb RAM, 8gb VRAM without paint.  Best to have 24gb+ RAM, 12gb+ VRAM.
 
 
-### Install from git.  Not recommended because ComfyUI-Manager will auto update when you press the update button. git will need manual updates for every custom\_node you have.
+### Install from git.  
 
+Not recommended because ComfyUI-Manager will auto update when you press the update button. git will need manual updates for every custom\_node you have.
 
 ```
 cd custom_nodes
