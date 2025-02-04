@@ -1,55 +1,7 @@
 {
-  "last_node_id": 21,
-  "last_link_id": 24,
+  "last_node_id": 23,
+  "last_link_id": 26,
   "nodes": [
-    {
-      "id": 18,
-      "type": "Hunyuan3D2ImageTo3D",
-      "pos": [
-        -307.19512939453125,
-        705.976318359375
-      ],
-      "size": [
-        315,
-        222
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 24
-        },
-        {
-          "name": "mask",
-          "type": "MASK",
-          "link": 23,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "filename",
-          "type": "STRING",
-          "links": [
-            16
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "Hunyuan3D2ImageTo3D"
-      },
-      "widgets_values": [
-        30,
-        true,
-        true,
-        true,
-        false
-      ]
-    },
     {
       "id": 7,
       "type": "LoadImage",
@@ -92,11 +44,11 @@
       ]
     },
     {
-      "id": 12,
+      "id": 23,
       "type": "Preview3D",
       "pos": [
-        89.18033599853516,
-        632.212646484375
+        149.37188720703125,
+        686.0650024414062
       ],
       "size": [
         315,
@@ -109,7 +61,7 @@
         {
           "name": "model_file",
           "type": "STRING",
-          "link": 16,
+          "link": 26,
           "widget": {
             "name": "model_file"
           }
@@ -117,28 +69,83 @@
       ],
       "outputs": [],
       "properties": {
-        "Node name for S&R": "Preview3D"
+        "Node name for S&R": "Preview3D",
+        "Show Grid": true,
+        "Camera Info": {
+          "position": {
+            "x": 7.749448299061437,
+            "y": 10.439857209476756,
+            "z": 7.757242217589018
+          },
+          "target": {
+            "x": 0,
+            "y": 2.5,
+            "z": 0
+          },
+          "zoom": 1,
+          "cameraType": "perspective"
+        }
       },
       "widgets_values": [
-        "hunyuan3d_70E30.glb",
+        "hunyuan3d_7CE38.glb",
         "original",
-        "#000000",
         10,
         "original",
         75,
         null
       ]
+    },
+    {
+      "id": 18,
+      "type": "Hunyuan3D2ImageTo3D",
+      "pos": [
+        -307.19512939453125,
+        705.976318359375
+      ],
+      "size": [
+        315,
+        222
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 24
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 23,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model file",
+          "type": "STRING",
+          "links": [
+            26
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Hunyuan3D2ImageTo3D"
+      },
+      "widgets_values": [
+        30,
+        true,
+        true,
+        true,
+        false,
+        "tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0"
+      ]
     }
   ],
   "links": [
-    [
-      16,
-      18,
-      0,
-      12,
-      0,
-      "STRING"
-    ],
     [
       23,
       7,
@@ -154,16 +161,24 @@
       18,
       0,
       "IMAGE"
+    ],
+    [
+      26,
+      18,
+      0,
+      23,
+      0,
+      "STRING"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.683013455365071,
+      "scale": 1.3109994191499976,
       "offset": [
-        958.835786988787,
-        -207.04284573998368
+        485.2584426492523,
+        -467.91069644496645
       ]
     },
     "0246.VERSION": [
@@ -172,8 +187,8 @@
       4
     ],
     "node_versions": {
-      "ComfyUI-Hunyuan-3D-2": "7c8cfc0ca3154ead3491e0d8a356d644b97710bf",
-      "comfy-core": "0.3.12"
+      "comfy-core": "0.3.13",
+      "ComfyUI-Hunyuan-3D-2": "cb6f7a41feebf9bbdf8a12ab0fc4fc1ff2067410"
     },
     "ue_links": []
   },

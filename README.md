@@ -8,6 +8,15 @@ This custom node might fail after the first restart.  Restart ComfyUI again.  Cl
 
 ## If it doesn't install...
 
+### Windows
+
+You will need to install [Visual C++ build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+### ComfyUI\_windows\_portable
+
+If you installed ComfyUI with ComfyUI\_windows\_portable, it is using a version of python which is missing the libs and header files.  The way around it is to either copy some folders or install the module from else where. See [issue #]()
+
+
 ### Ubuntu 
 
 `sudo apt install python3-dev libgl-dev`
@@ -28,10 +37,9 @@ Hunyuan-3D needs g++ 13, Suse has g++ 14+ by default
 ## Workarounds...
 
 * If you get a square panel.  Make sure you have a transparent background in the image.  If the image came from another node, insert an "invert mask" node before giving the mask to this node, some nodes have a mask that's reversed.
-* Hunyuan-3D-2 uses more main memory than GPU memory.  On a 16gb RAM main memory computer, you'll have to quit everything else other than ComfyUI, have only a few custom\_nodes installed.  Or use the command line version.  I have ran it on 16gb RAM, 8gb VRAM without paint.  Best to have 24gb+ RAM, 12gb+ VRAM.
 
 
-### Install from git.  
+### Install from git
 
 Not recommended because ComfyUI-Manager will auto update when you press the update button. git will need manual updates for every custom\_node you have.
 
@@ -42,6 +50,14 @@ pip install -r requirements.txt
 cd ComfyUI-Hunyuan-3D-2
 git submodule update --init   # You need to get the submodules if you install from git
 ```
+
+### Other models...
+
+* Right click on the node, click "convert input to widget", "model".
+* connect a string node to the "model" input.
+* Put in the string node the ID of the model on hugging face.  ie. tencent/Hunyuan3D-2
+
+* The big model files are downloaded into `~/.cache/huggingface/hub`
 
 
 ![Screenshot, workflow is in the examples/ folder](assets/workflow_screenshot.png)
