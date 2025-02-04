@@ -20,7 +20,7 @@ class Hunyuan3DImageTo3D:
     def INPUT_TYPES(s):
         models = [
             'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0',
-            'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0-fast',
+            'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0-fast[variant=fp16]',
             ]
         return {
             "required": {
@@ -37,7 +37,7 @@ class Hunyuan3DImageTo3D:
                     "tooltip": "Paint needs a lot more VRAM",
                 }),
                 "model": (models, {
-                    "tooltip": "huggingface id of model.  ie. author/name/subfolder",
+                    "tooltip": "huggingface id of model(author/name/subfolder)",  # noqa: E501
                 }),
             }
         }
@@ -140,6 +140,12 @@ class Hunyuan3DImageTo3D:
 #        if 'HY3DGEN_MODELS' not in os.environ:
 #            os.environ['HY3DGEN_MODELS'] = checkpoint_dir
 
+        variant = None
+        variant_m = re.match(r"^(.*)\[variant=([^\]]+)\]$", model)
+        if variant_m is not None:
+            model = variant_m.group(1)
+            variant = variant_m.group(2)
+
         subfolder = None
         subfolder_m = re.match(r"^([^/]+/[^/]+)/(.+)$", model)
         if subfolder_m is not None:
@@ -167,6 +173,7 @@ class Hunyuan3DImageTo3D:
                 pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
                     model,
                     subfolder=subfolder,
+                    variant=variant
                 )
 
                 output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
@@ -186,7 +193,6 @@ class Hunyuan3DImageTo3D:
                     from hy3dgen.texgen import Hunyuan3DPaintPipeline
                     pipeline = Hunyuan3DPaintPipeline.from_pretrained(
                         model,
-                        subfolder=subfolder,
                     )
                     mesh = pipeline(mesh, image=input_image_file)
 
