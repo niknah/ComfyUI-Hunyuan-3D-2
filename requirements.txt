@@ -16,3 +16,4 @@ xatlas
 scikit-image
 accelerate
 python-dev
+pygit2

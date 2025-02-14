@@ -67,11 +67,23 @@ class Hunyuan3DImageTo3D:
     def install_check():
         this_path = os.path.dirname(os.path.realpath(__file__))
 
-        Hunyuan3DImageTo3D.popen_print_output(
-            ['git', 'submodule', 'update', '--init', '--recursive'],
-            this_path,
-            shell=True,
-        )
+        if not os.path.exists(
+            os.path.join(this_path, 'Hunyuan3D-2/README.md')
+        ):
+            try:
+                import pygit2
+                repo_path = os.path.join(os.path.dirname(__file__))
+                repo = pygit2.Repository(repo_path)
+                submodules = pygit2.submodules.SubmoduleCollection(repo)
+                submodules.update(init=True)
+            except Exception as e:
+                print(f"pygit2 failed: {e}")
+#            Hunyuan3DImageTo3D.popen_print_output(
+#                ['git', 'submodule', 'update', '--init', '--recursive'],
+#                this_path,
+#                shell=True,
+#            )
+
         if importlib.util.find_spec('custom_rasterizer') is None:
             print("Installing custom_rasterizer")
             Hunyuan3DImageTo3D.popen_print_output(
