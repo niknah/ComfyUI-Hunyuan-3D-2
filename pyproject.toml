@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-hunyuan-3d-2"
 description = "Image to 3D using Hunyuan-3D-2"
-version = "0.9.3"
+version = "0.9.4"
 license = {text = "MIT License"}
 
 [project.urls]

@@ -1,0 +1,355 @@
+{
+  "last_node_id": 29,
+  "last_link_id": 31,
+  "nodes": [
+    {
+      "id": 7,
+      "type": "LoadImage",
+      "pos": [
+        -770.9444580078125,
+        708.9136352539062
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            24
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            23
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.26",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "front.png",
+        "image"
+      ]
+    },
+    {
+      "id": 28,
+      "type": "LoadImage",
+      "pos": [
+        -799.9444580078125,
+        1099.91357421875
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            28
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            29
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.26",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "back.png",
+        "image"
+      ]
+    },
+    {
+      "id": 29,
+      "type": "LoadImage",
+      "pos": [
+        -742.9444580078125,
+        1485.91357421875
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            30
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            31
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.26",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "left.png",
+        "image"
+      ]
+    },
+    {
+      "id": 24,
+      "type": "Preview3D",
+      "pos": [
+        93.15386199951172,
+        739.63623046875
+      ],
+      "size": [
+        400,
+        550
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model_file",
+          "type": "STRING",
+          "widget": {
+            "name": "model_file"
+          },
+          "link": 27
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.26",
+        "Node name for S&R": "Preview3D",
+        "Camera Info": {
+          "position": {
+            "x": 11.336163466053247,
+            "y": 9.485824813412833,
+            "z": 9.028317976243475
+          },
+          "target": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "zoom": 1,
+          "cameraType": "perspective"
+        }
+      },
+      "widgets_values": [
+        "hunyuan3d_CE751.glb",
+        ""
+      ]
+    },
+    {
+      "id": 18,
+      "type": "Hunyuan3D2ImageTo3D",
+      "pos": [
+        -307.19512939453125,
+        705.976318359375
+      ],
+      "size": [
+        315,
+        318
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 24
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "shape": 7,
+          "link": 23
+        },
+        {
+          "name": "back_image",
+          "type": "IMAGE",
+          "shape": 7,
+          "link": 28
+        },
+        {
+          "name": "back_mask",
+          "type": "MASK",
+          "shape": 7,
+          "link": 29
+        },
+        {
+          "name": "left_image",
+          "type": "IMAGE",
+          "shape": 7,
+          "link": 30
+        },
+        {
+          "name": "left_mask",
+          "type": "MASK",
+          "shape": 7,
+          "link": 31
+        },
+        {
+          "name": "right_image",
+          "type": "IMAGE",
+          "shape": 7,
+          "link": null
+        },
+        {
+          "name": "right_mask",
+          "type": "MASK",
+          "shape": 7,
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model file",
+          "type": "STRING",
+          "links": [
+            27
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-hunyuan-3d-2",
+        "ver": "168e4f6db58fb498ae4f261942f992a64d2dc3a2",
+        "Node name for S&R": "Hunyuan3D2ImageTo3D"
+      },
+      "widgets_values": [
+        30,
+        true,
+        true,
+        true,
+        true,
+        "tencent/Hunyuan3D-2mv/hunyuan3d-dit-v2-mv"
+      ]
+    }
+  ],
+  "links": [
+    [
+      23,
+      7,
+      1,
+      18,
+      1,
+      "MASK"
+    ],
+    [
+      24,
+      7,
+      0,
+      18,
+      0,
+      "IMAGE"
+    ],
+    [
+      27,
+      18,
+      0,
+      24,
+      0,
+      "STRING"
+    ],
+    [
+      28,
+      28,
+      0,
+      18,
+      2,
+      "IMAGE"
+    ],
+    [
+      29,
+      28,
+      1,
+      18,
+      3,
+      "MASK"
+    ],
+    [
+      30,
+      29,
+      0,
+      18,
+      4,
+      "IMAGE"
+    ],
+    [
+      31,
+      29,
+      1,
+      18,
+      5,
+      "MASK"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.620921323059155,
+      "offset": [
+        1585.683922414662,
+        -416.98536297053886
+      ]
+    },
+    "0246.VERSION": [
+      0,
+      0,
+      4
+    ],
+    "node_versions": {
+      "comfy-core": "0.3.13",
+      "ComfyUI-Hunyuan-3D-2": "cb6f7a41feebf9bbdf8a12ab0fc4fc1ff2067410"
+    },
+    "ue_links": [],
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

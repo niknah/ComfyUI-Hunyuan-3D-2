@@ -11,6 +11,7 @@ import torch
 import hashlib
 import platform
 import re
+from packaging import version
 from PIL import Image
 import numpy as np
 
@@ -20,7 +21,13 @@ class Hunyuan3DImageTo3D:
     def INPUT_TYPES(s):
         models = [
             'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0',
-            'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0-fast[variant=fp16]',
+            'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0-fast',
+            'tencent/Hunyuan3D-2mini/hunyuan3d-dit-v2-mini',
+            'tencent/Hunyuan3D-2mini/hunyuan3d-dit-v2-mini-fast',
+            'tencent/Hunyuan3D-2mini/hunyuan3d-dit-v2-mini-turbo',
+            'tencent/Hunyuan3D-2mv/hunyuan3d-dit-v2-mv-fast',
+            'tencent/Hunyuan3D-2mv/hunyuan3d-dit-v2-mv-turbo',
+            'tencent/Hunyuan3D-2mv/hunyuan3d-dit-v2-mv',
             ]
         return {
             "required": {
@@ -39,6 +46,12 @@ class Hunyuan3DImageTo3D:
                 "model": (models, {
                     "tooltip": "huggingface id of model(author/name/subfolder)",  # noqa: E501
                 }),
+                "back_image": ("IMAGE",),
+                "back_mask": ("MASK",),
+                "left_image": ("IMAGE",),
+                "left_mask": ("MASK",),
+                "right_image": ("IMAGE",),
+                "right_mask": ("MASK",),
             }
         }
     RETURN_TYPES = ("STRING",)
@@ -64,6 +77,45 @@ class Hunyuan3DImageTo3D:
             )
 
     @staticmethod
+    def install_custom_rasterizer(this_path):
+        print("Installing custom_rasterizer")
+        Hunyuan3DImageTo3D.popen_print_output(
+            [sys.executable, 'setup.py', 'install'],
+            os.path.join(
+                this_path,
+                'Hunyuan3D-2/hy3dgen/texgen/custom_rasterizer'
+            )
+        )
+
+    @staticmethod
+    def install_hy3dgen(this_path):
+        print("Installing hy3dgen")
+        Hunyuan3DImageTo3D.popen_print_output(
+            [sys.executable, 'setup.py', 'install'],
+            os.path.join(this_path, 'Hunyuan3D-2')
+            )
+
+    @staticmethod
+    def install_mesh_processor(this_path):
+        renderer_dir = os.path.join(
+            this_path,
+            'Hunyuan3D-2/hy3dgen/texgen/differentiable_renderer'
+        )
+        if platform.system() == 'Windows':
+            if importlib.util.find_spec('mesh_processor') is None:
+                print("Installing mesh_processor")
+                Hunyuan3DImageTo3D.popen_print_output(
+                    [sys.executable, 'setup.py', 'install'],
+                    renderer_dir
+                    )
+        else:  # Linux
+            if len(glob.glob(f'{renderer_dir}/mesh_processor*.so')) == 0:
+                Hunyuan3DImageTo3D.popen_print_output(
+                    ['/bin/bash', 'compile_mesh_painter.sh'],
+                    renderer_dir
+                    )
+
+    @staticmethod
     def install_check():
         this_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -84,40 +136,20 @@ class Hunyuan3DImageTo3D:
 #                shell=True,
 #            )
 
+        cr_version = version.parse("0.1")
         if importlib.util.find_spec('custom_rasterizer') is None:
-            print("Installing custom_rasterizer")
-            Hunyuan3DImageTo3D.popen_print_output(
-                [sys.executable, 'setup.py', 'install'],
-                os.path.join(
-                    this_path,
-                    'Hunyuan3D-2/hy3dgen/texgen/custom_rasterizer'
-                )
-            )
+            Hunyuan3DImageTo3D.install_custom_rasterizer(this_path)
+        elif cr_version > version.parse(importlib.metadata.version('custom_rasterizer')):  # noqa: E501
+            Hunyuan3DImageTo3D.install_custom_rasterizer(this_path)
 
+        hy3dgen_version = version.parse("2.0.2")
         if importlib.util.find_spec('hy3dgen') is None:
-            print("Installing hy3dgen")
-            Hunyuan3DImageTo3D.popen_print_output(
-                [sys.executable, 'setup.py', 'install'],
-                os.path.join(this_path, 'Hunyuan3D-2')
-                )
+            Hunyuan3DImageTo3D.install_hy3dgen(this_path)
+        elif hy3dgen_version > version.parse(importlib.metadata.version('hy3dgen')):  # noqa: E501
+            Hunyuan3DImageTo3D.install_hy3dgen(this_path)
 
-        renderer_dir = os.path.join(
-            this_path,
-            'Hunyuan3D-2/hy3dgen/texgen/differentiable_renderer'
-        )
-        if platform.system() == 'Windows':
-            if importlib.util.find_spec('mesh_processor') is None:
-                print("Installing mesh_processor")
-                Hunyuan3DImageTo3D.popen_print_output(
-                    [sys.executable, 'setup.py', 'install'],
-                    renderer_dir
-                    )
-        else:  # Linux
-            if len(glob.glob(f'{renderer_dir}/mesh_processor*.so')) == 0:
-                Hunyuan3DImageTo3D.popen_print_output(
-                    ['/bin/bash', 'compile_mesh_painter.sh'],
-                    renderer_dir
-                    )
+        if importlib.util.find_spec('mesh_processor') is None:
+            Hunyuan3DImageTo3D.install_differentiable_renderer(this_path)
 
     @staticmethod
     def get_spare_filename(filename_format):
@@ -126,6 +158,19 @@ class Hunyuan3DImageTo3D:
             if not os.path.exists(filename):
                 return filename
         return None
+
+    def comfy_img_to_file(self, image, mask, input_image_file):
+        i = 255. * image.cpu().numpy()
+        img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+        if mask is not None:
+            m = 255. * mask.cpu().numpy()
+            mask_pil = Image.fromarray(m)
+            mask_pil = np.clip(mask_pil, 0, 255).astype(np.uint8)
+            mask_pil = 255 - mask_pil
+            # If it crashes here,
+            # check that you have transparency in the image
+            img.putalpha(Image.fromarray(mask_pil, mode='L'))
+        img.save(input_image_file)
 
     def process(
         self, image,
@@ -136,6 +181,12 @@ class Hunyuan3DImageTo3D:
         face_reducer,
         paint,
         model='tencent/Hunyuan3D-2',
+        back_image=None,
+        back_mask=None,
+        left_image=None,
+        left_mask=None,
+        right_image=None,
+        right_mask=None,
     ):
         from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
         import hy3dgen.shapegen
@@ -152,7 +203,7 @@ class Hunyuan3DImageTo3D:
 #        if 'HY3DGEN_MODELS' not in os.environ:
 #            os.environ['HY3DGEN_MODELS'] = checkpoint_dir
 
-        variant = None
+        variant = 'fp16'
         variant_m = re.match(r"^(.*)\[variant=([^\]]+)\]$", model)
         if variant_m is not None:
             model = variant_m.group(1)
@@ -164,23 +215,72 @@ class Hunyuan3DImageTo3D:
             model = subfolder_m.group(1)
             subfolder = subfolder_m.group(2)
 
+        isMV = model == 'tencent/Hunyuan3D-2mv'
         output_3d_file = None
         with tempfile.TemporaryDirectory() as temp_dir:
-            for img, mask1 in zip(image, mask):
-                i = 255. * img.cpu().numpy()
-                img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-                if mask1 is not None:
-                    m = 255. * mask1.cpu().numpy()
-                    mask = Image.fromarray(m)
-                    mask = np.clip(mask, 0, 255).astype(np.uint8)
-                    mask = 255 - mask
-                    # If it crashes here,
-                    # check that you have transparency in the image
-                    img.putalpha(Image.fromarray(mask, mode='L'))
-                input_image_file = os.path.join(temp_dir, "input.png")
-                img.save(input_image_file)
+            nth = 0
+            front_images_list = []
+            back_images_list = []
+            left_images_list = []
+            right_images_list = []
+            if image is not None:
+                front_images_list = list(zip(image, mask))
+            if back_image is not None:
+                back_images_list = list(zip(back_image, back_mask))
+            if left_image is not None:
+                left_images_list = list(zip(left_image, left_mask))
+            if right_image is not None:
+                right_images_list = list(zip(right_image, right_mask))
 
-                mask = i = img = None
+            max_len = max(
+                len(front_images_list),
+                len(back_images_list),
+                len(left_images_list),
+                len(right_images_list),
+            )
+
+            sides = {
+                'front': front_images_list,
+                'back': back_images_list,
+                'left': left_images_list,
+                'right': right_images_list,
+            }
+
+            # front should always be first
+            side_names = [
+                'front',
+                'back',
+                'left',
+                'right',
+            ]
+
+            for nth in range(0, max_len):
+                image_obj = None
+                for side in side_names:
+                    side_list = sides[side]
+                    if side_list is None:
+                        continue
+
+                    if nth >= len(side_list):
+                        continue
+
+                    side_info = side_list[nth]
+                    if side_info is None:
+                        continue
+
+                    (side_image, side_mask) = side_list[nth]
+                    input_image_file = os.path.join(
+                        temp_dir, f"{side}{nth}.png"
+                        )
+                    self.comfy_img_to_file(
+                        side_image, side_mask, input_image_file
+                        )
+                    image_obj = {}
+                    if isMV:
+                        image_obj[side] = input_image_file
+                    else:
+                        image_obj = input_image_file
+                        break
 
                 pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
                     model,
@@ -191,9 +291,11 @@ class Hunyuan3DImageTo3D:
                 output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
                     os.path.join(output_dir, 'hunyuan3d_{:05X}.glb')
                 )
+
                 mesh = pipeline(
-                    image=input_image_file, num_inference_steps=steps,
-                    generator=torch.manual_seed(2025))[0]
+                    image=image_obj, num_inference_steps=steps,
+                    generator=torch.manual_seed(2025)
+                )[0]
                 if floater_remover:
                     mesh = hy3dgen.shapegen.FloaterRemover()(mesh)
                 if face_remover:
@@ -204,7 +306,8 @@ class Hunyuan3DImageTo3D:
                 if paint:
                     from hy3dgen.texgen import Hunyuan3DPaintPipeline
                     pipeline = Hunyuan3DPaintPipeline.from_pretrained(
-                        model,
+                        "tencent/Hunyuan3D-2",
+                        # model,
                     )
                     mesh = pipeline(mesh, image=input_image_file)
 
@@ -222,12 +325,26 @@ class Hunyuan3DImageTo3D:
         face_reducer,
         paint,
         model,
+        back_image,
+        back_mask,
+        left_image,
+        left_mask,
+        right_image,
+        right_mask,
     ):
         m = hashlib.sha256()
+        m.update(image)
+        m.update(mask)
         m.update(steps)
         m.update(floater_remover)
         m.update(face_remover)
         m.update(face_reducer)
         m.update(paint)
         m.update(model)
+        m.update(back_image)
+        m.update(back_mask)
+        m.update(left_image)
+        m.update(left_mask)
+        m.update(right_image)
+        m.update(right_mask)
         return m.digest().hex()

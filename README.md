@@ -14,7 +14,11 @@ You will need to install [Visual C++ build tools](https://visualstudio.microsoft
 
 ### ComfyUI\_windows\_portable
 
-If you installed ComfyUI with ComfyUI\_windows\_portable, it is using a version of python which is missing the libs and header files.  The way around it is to either copy some folders or install the module from else where. See [issue #]()
+If you installed ComfyUI with ComfyUI\_windows\_portable, it is using a version of python which is missing the libs and header files.  The way around it is to either copy some folders or install the module from else where. See [issue #3](https://github.com/niknah/ComfyUI-Hunyuan-3D-2/issues/3#issuecomment-2623589325)
+
+If you are getting a ` has no attribute '_get_vc_env'` error.
+Run `pip install setuptools==75.8.2` to downgrade setuptools.
+See [Issue #148877](https://github.com/pytorch/pytorch/issues/148877)
 
 
 ### Ubuntu 
@@ -61,3 +65,7 @@ git submodule update --init   # You need to get the submodules if you install fr
 
 
 ![Screenshot, workflow is in the examples/ folder](assets/workflow_screenshot.png)
+
+### Changes
+
+0.9.4: Added mini, turbo models.
