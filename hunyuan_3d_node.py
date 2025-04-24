@@ -149,7 +149,7 @@ class Hunyuan3DImageTo3D:
             Hunyuan3DImageTo3D.install_hy3dgen(this_path)
 
         if importlib.util.find_spec('mesh_processor') is None:
-            Hunyuan3DImageTo3D.install_differentiable_renderer(this_path)
+            Hunyuan3DImageTo3D.install_mesh_processor(this_path)
 
     @staticmethod
     def get_spare_filename(filename_format):
