@@ -117,6 +117,7 @@ class Hunyuan3DImageTo3D:
 
     @staticmethod
     def install_check():
+        print("install check")
         this_path = os.path.dirname(os.path.realpath(__file__))
 
         if not os.path.exists(
@@ -143,6 +144,10 @@ class Hunyuan3DImageTo3D:
             Hunyuan3DImageTo3D.install_custom_rasterizer(this_path)
 
         hy3dgen_version = version.parse("2.0.2")
+        # Don't know why.  setup.py doesn't remove the previous version
+        Hunyuan3DImageTo3D.popen_print_output(
+            ['pip', 'uninstall', 'hy3dgen-2.0.0-py3.12.egg']
+        )
         if importlib.util.find_spec('hy3dgen') is None:
             Hunyuan3DImageTo3D.install_hy3dgen(this_path)
         elif hy3dgen_version > version.parse(importlib.metadata.version('hy3dgen')):  # noqa: E501
