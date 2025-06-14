@@ -80,4 +80,5 @@ git submodule update --init   # You need to get the submodules if you install fr
 
 ### Changes
 
+0.9.6: Added Hunyuan 3D v2.1 support
 0.9.4: Added mini, turbo models.
