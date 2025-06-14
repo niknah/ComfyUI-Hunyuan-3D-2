@@ -20,6 +20,7 @@ class Hunyuan3DImageTo3D:
     @classmethod
     def INPUT_TYPES(s):
         models = [
+            'tencent/Hunyuan3D-2.1/hunyuan3d-dit-v2-1',
             'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0',
             'tencent/Hunyuan3D-2/hunyuan3d-dit-v2-0-fast',
             'tencent/Hunyuan3D-2mini/hunyuan3d-dit-v2-mini',
@@ -220,7 +221,13 @@ class Hunyuan3DImageTo3D:
             model = subfolder_m.group(1)
             subfolder = subfolder_m.group(2)
 
+        is21 = model == 'tencent/Hunyuan3D-2.1'
         isMV = model == 'tencent/Hunyuan3D-2mv'
+
+        if is21:
+            this_path = os.path.dirname(os.path.realpath(__file__))
+            sys.path.insert(0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dshape'))
+            sys.path.insert(0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dpaint'))
         output_3d_file = None
         with tempfile.TemporaryDirectory() as temp_dir:
             nth = 0
@@ -287,10 +294,14 @@ class Hunyuan3DImageTo3D:
                         image_obj = input_image_file
                         break
 
+                use_safetensors = True
+                if is21:
+                    use_safetensors = False
                 pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
                     model,
                     subfolder=subfolder,
-                    variant=variant
+                    variant=variant,
+                    use_safetensors=use_safetensors,
                 )
 
                 output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
@@ -308,11 +319,14 @@ class Hunyuan3DImageTo3D:
                 if face_reducer:
                     mesh = hy3dgen.shapegen.FaceReducer()(mesh)
 
+                paint_model = "tencent/Hunyuan3D-2"
+                if is21:
+                    paint_model = "tencent/Hunyuan3D-2.1"
                 if paint:
                     from hy3dgen.texgen import Hunyuan3DPaintPipeline
                     pipeline = Hunyuan3DPaintPipeline.from_pretrained(
-                        "tencent/Hunyuan3D-2",
-                        # model,
+                        paint_model,
+                        use_safetensors=use_safetensors,
                     )
                     mesh = pipeline(mesh, image=input_image_file)
 
