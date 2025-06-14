@@ -1,20 +1,12 @@
 
 
-
-## This is old
-
-Use the custom node one here instead...
-[https://github.com/kijai/ComfyUI-Hunyuan3DWrapper](https://github.com/kijai/ComfyUI-Hunyuan3DWrapper)
-
-
-
-
-This is a custom\_node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [Hunyuan-3D-2](https://github.com/Tencent/Hunyuan3D-2) from Tencent.
+This is a custom\_node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [Hunyuan-3D-2](https://github.com/Tencent/Hunyuan3D-2) [Hunyuan-3D-2.1](https://github.com/Tencent/Hunyuan3D-2.1) from Tencent.
 
 Make sure you use an image with a transparent background.
 
 This custom node might fail after the first restart.  Restart ComfyUI again.  Click on the panel ~~☐~~ to look for errors.
 
+Supports v2.1, v2.0, multi view, mini, turbo models.
 
 ## If it doesn't install...
 
