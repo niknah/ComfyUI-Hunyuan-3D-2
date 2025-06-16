@@ -118,12 +118,17 @@ class Hunyuan3DImageTo3D:
 
     @staticmethod
     def install_check():
-        print("install check")
         this_path = os.path.dirname(os.path.realpath(__file__))
 
-        if not os.path.exists(
-            os.path.join(this_path, 'Hunyuan3D-2/README.md')
+        if (
+                (not os.path.exists(
+                    os.path.join(this_path, 'Hunyuan3D-2.0/README.md')
+                ))
+                or (not os.path.exists(
+                    os.path.join(this_path, 'Hunyuan3D-2.1/README.md')
+                ))
         ):
+            print("clone submouldes")
             try:
                 import pygit2
                 repo_path = os.path.join(os.path.dirname(__file__))
@@ -226,8 +231,13 @@ class Hunyuan3DImageTo3D:
 
         if is21:
             this_path = os.path.dirname(os.path.realpath(__file__))
-            sys.path.insert(0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dshape'))
-            sys.path.insert(0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dpaint'))
+            sys.path.insert(
+                0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dshape')
+                )
+            sys.path.insert(
+                0,
+                os.path.join(this_path, './Hunyuan3D-2.1/hy3dpaint')
+                )
         output_3d_file = None
         with tempfile.TemporaryDirectory() as temp_dir:
             nth = 0
@@ -326,7 +336,7 @@ class Hunyuan3DImageTo3D:
                     from hy3dgen.texgen import Hunyuan3DPaintPipeline
                     pipeline = Hunyuan3DPaintPipeline.from_pretrained(
                         paint_model,
-                        use_safetensors=use_safetensors,
+                        # use_safetensors=use_safetensors,
                     )
                     mesh = pipeline(mesh, image=input_image_file)
 
