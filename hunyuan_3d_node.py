@@ -16,6 +16,7 @@ from PIL import Image
 import numpy as np
 
 
+
 class Hunyuan3DImageTo3D:
     @classmethod
     def INPUT_TYPES(s):
@@ -183,6 +184,28 @@ class Hunyuan3DImageTo3D:
             img.putalpha(Image.fromarray(mask_pil, mode='L'))
         img.save(input_image_file)
 
+    def quick_convert_with_obj2gltf(obj_path: str, glb_path: str) -> bool:
+        from hy3dpaint.convert_utils import create_glb_with_pbr_materials
+        textures = {
+            'albedo': obj_path.replace('.obj', '.jpg'),
+            'metallic': obj_path.replace('.obj', '_metallic.jpg'),
+            'roughness': obj_path.replace('.obj', '_roughness.jpg')
+            }
+        create_glb_with_pbr_materials(obj_path, textures, glb_path)
+
+    def init_21(self):
+        if "torchvision.transforms.functional_tensor" not in sys.modules:
+            import types
+            # https://github.com/xinntao/Real-ESRGAN/issues/768#issuecomment-2439896571
+            from torchvision.transforms.functional import rgb_to_grayscale
+
+            # Create a module for `torchvision.transforms.functional_tensor`
+            functional_tensor = types.ModuleType("torchvision.transforms.functional_tensor")
+            functional_tensor.rgb_to_grayscale = rgb_to_grayscale
+
+            # Add this module to sys.modules so other imports can access it
+            sys.modules["torchvision.transforms.functional_tensor"] = functional_tensor
+
     def process(
         self, image,
         mask,
@@ -229,15 +252,21 @@ class Hunyuan3DImageTo3D:
         is21 = model == 'tencent/Hunyuan3D-2.1'
         isMV = model == 'tencent/Hunyuan3D-2mv'
 
+        this_path = os.path.dirname(os.path.realpath(__file__))
+        new_paths = [
+            os.path.join(this_path, 'Hunyuan3D-2.1'),
+            os.path.join(this_path, f'Hunyuan3D-2.1{os.sep}hy3dshape'),
+            os.path.join(this_path, f'Hunyuan3D-2.1{os.sep}hy3dpaint'),
+        ]
         if is21:
-            this_path = os.path.dirname(os.path.realpath(__file__))
-            sys.path.insert(
-                0, os.path.join(this_path, './Hunyuan3D-2.1/hy3dshape')
-                )
-            sys.path.insert(
-                0,
-                os.path.join(this_path, './Hunyuan3D-2.1/hy3dpaint')
-                )
+            self.init_21()
+            for path in new_paths:
+                sys.path.insert(
+                    0, path
+                    )
+            if 'utils' in sys.modules:
+                del sys.modules['utils']
+
         output_3d_file = None
         with tempfile.TemporaryDirectory() as temp_dir:
             nth = 0
@@ -314,34 +343,77 @@ class Hunyuan3DImageTo3D:
                     use_safetensors=use_safetensors,
                 )
 
-                output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
-                    os.path.join(output_dir, 'hunyuan3d_{:05X}.glb')
-                )
+                if False:
+                    output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
+                        os.path.join(output_dir, 'hunyuan3d_A81E7.glb')
+                    )
+                else:
+                    output_3d_file = Hunyuan3DImageTo3D.get_spare_filename(
+                        os.path.join(output_dir, 'hunyuan3d_{:05X}.glb')
+                    )
 
-                mesh = pipeline(
-                    image=image_obj, num_inference_steps=steps,
-                    generator=torch.manual_seed(2025)
-                )[0]
-                if floater_remover:
-                    mesh = hy3dgen.shapegen.FloaterRemover()(mesh)
-                if face_remover:
-                    mesh = hy3dgen.shapegen.DegenerateFaceRemover()(mesh)
-                if face_reducer:
-                    mesh = hy3dgen.shapegen.FaceReducer()(mesh)
+                    mesh = pipeline(
+                        image=image_obj, num_inference_steps=steps,
+                        generator=torch.manual_seed(2025)
+                    )[0]
+                    if floater_remover:
+                        mesh = hy3dgen.shapegen.FloaterRemover()(mesh)
+                    if face_remover:
+                        mesh = hy3dgen.shapegen.DegenerateFaceRemover()(mesh)
+                    if face_reducer:
+                        mesh = hy3dgen.shapegen.FaceReducer()(mesh)
+
+                this_path = os.path.dirname(os.path.realpath(__file__))
+                new_paths = [
+                    os.path.join(this_path, f'Hunyuan3D-2.1'),
+                    os.path.join(this_path, f'Hunyuan3D-2.1{os.sep}hy3dshape'),
+                    os.path.join(this_path, f'Hunyuan3D-2.1{os.sep}hy3dpaint'),
+                ]
 
                 paint_model = "tencent/Hunyuan3D-2"
-                if is21:
-                    paint_model = "tencent/Hunyuan3D-2.1"
                 if paint:
-                    from hy3dgen.texgen import Hunyuan3DPaintPipeline
-                    pipeline = Hunyuan3DPaintPipeline.from_pretrained(
-                        paint_model,
-                        # use_safetensors=use_safetensors,
-                    )
-                    mesh = pipeline(mesh, image=input_image_file)
+                    if is21:
+                        old_cwd = os.getcwd()
+                        os.chdir(os.path.join(this_path, 'Hunyuan3D-2.1'))
+                        try:
+                            from textureGenPipeline \
+                                import Hunyuan3DPaintPipeline, Hunyuan3DPaintConfig
+                            conf = Hunyuan3DPaintConfig(
+                                max_num_view=8,
+                                resolution=768
+                            )
+                            tex_pipeline = Hunyuan3DPaintPipeline(conf)
+                            text_path = os.path.join(
+                                output_dir,
+                                'textured_mesh.obj'
+                            )
+                            path_textured = tex_pipeline(
+                                mesh_path=output_3d_file,
+                                image_path=input_image_file,
+                                output_mesh_path=text_path, save_glb=False
+                            )
+                            glb_path_textured = os.path.join(
+                                output_dir, 'textured_mesh.glb'
+                            )
+                            conversion_success = self.quick_convert_with_obj2gltf(
+                                path_textured, glb_path_textured
+                            )
+                        finally:
+                            os.chdir(old_cwd)
+                    else:
+                        from hy3dgen.texgen import Hunyuan3DPaintPipeline
+                        pipeline = Hunyuan3DPaintPipeline.from_pretrained(
+                            paint_model,
+                            # use_safetensors=use_safetensors,
+                        )
+                        mesh = pipeline(mesh, image=input_image_file)
 
                 mesh.export(output_3d_file)
                 break
+        if is21:
+            for path in new_paths:
+                if path in sys.path:
+                    sys.path.remove(path)
         print(os.path.basename(output_3d_file))
         return (os.path.basename(output_3d_file), )
 

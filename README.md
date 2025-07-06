@@ -12,6 +12,17 @@ Supports v2.1, v2.0, multi view, mini, turbo models.
 
 You may need to remove the previous version, it doesn't uninstall automatically. `pip uninstall hy3dgen-2.0.0-py3.12.egg`
 
+## Hunyuan 3D v2.1
+
+Paint is not working.
+
+For painting.  You need to manually download the RealESRGAN weight to the `ckpt` folder using the following command:
+
+```bash
+wget https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth -P ckpt
+```
+
+
 ### Windows
 
 You will need to install [Visual C++ build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
