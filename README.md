@@ -10,7 +10,18 @@ Supports v2.1, v2.0, multi view, mini, turbo models.
 
 ## If it doesn't install...
 
-You may need to remove the previous version, it doesn't uninstall automatically. `pip uninstall hy3dgen-2.0.0-py3.12.egg`
+Your version of git may not support submodules.  To install the submodules manually...
+```
+cd ComfyUI/custom\_nodes/ComfyUI-Hunyuan-3D-2/
+rm -rf Hunyuan3D-2 Hunyuan3D-2.1
+rmdir /s Hunyuan3D-2 Hunyuan3D-2.1
+git clone https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+git clone https://github.com/Tencent-Hunyuan/Hunyuan3D-2.1
+```
+
+There are also pre-compiled .whl files in the releases page.  If the custom\_rastizer, hy3dgen, mesh\_processor python modules fail to install.
+
+
 
 ## Hunyuan 3D v2.1
 
