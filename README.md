@@ -1,4 +1,5 @@
 
+# Don't use this one any more.  Hunyuan-3D v2 is built into ComfyUI.  Find it in the templates section.
 
 This is a custom\_node for [ComfyUI](https://github.com/comfyanonymous/ComfyUI).  It converts an image into a 3D file you can import into Blender or whatever 3d software you use.  It uses [Hunyuan-3D-2](https://github.com/Tencent/Hunyuan3D-2) [Hunyuan-3D-2.1](https://github.com/Tencent/Hunyuan3D-2.1) from Tencent.
 
